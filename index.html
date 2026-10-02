@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080708">
+<meta name="mobile-web-app-capable" content="yes">
+<title>WINTER ARC — 90 Day Tracker</title>
+<style>
+*{box-sizing:border-box}
+:root{
+ --bg:#080708;--panel:#121012;--panel2:#171417;--panel3:#0e0d0f;
+ --text:#eee9ee;--muted:#9d959e;--line:#343037;
+ --pink:#c47ac8;--pink2:#8c5a91;--green:#78bd91;--red:#c66b77;
+}
+body{margin:0;background:radial-gradient(circle at 50% 15%,#2a2029 0,#110e12 30%,#050506 78%);color:var(--text);font-family:Inter,Arial,Helvetica,sans-serif}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle at 18% 20%,rgba(196,122,200,.11),transparent 28%),radial-gradient(circle at 80% 70%,rgba(140,90,145,.08),transparent 25%)}
+.app{max-width:1180px;margin:40px auto;background:rgba(16,14,17,.96);min-height:100vh;border:1px solid #2e2930;border-radius:15px;overflow:hidden;box-shadow:0 35px 100px rgba(0,0,0,.75)}
+header{background:#0e0d0f;padding:26px 30px 18px;border-bottom:1px solid #252127;position:relative}
+.brand{font-size:31px;font-weight:800;letter-spacing:2px}
+.tag{display:none}
+.topgrid{display:grid;grid-template-columns:1fr 1fr 100px;gap:20px;padding:22px 30px 12px;background:#0e0d0f}
+.field label{font-weight:700;color:#a9a1aa;display:block;margin-bottom:7px;font-size:10px;text-transform:uppercase;letter-spacing:1px}
+.field input{width:100%;border:1px solid #322d34;background:#171418;color:#eee;padding:9px 11px;border-radius:8px;outline:none;font:inherit}
+.field input:focus{border-color:var(--pink)}
+.goal{grid-column:1/3}
+.avatar{border:1px solid #39323a;border-radius:6px;width:78px;height:104px;display:flex;align-items:center;justify-content:center;color:#8e8790;overflow:hidden;background:#171418;cursor:pointer;position:relative}
+.avatar:after{content:"UPLOAD";position:absolute;bottom:6px;right:8px;color:#8b838d;font-size:7px;letter-spacing:1px}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.section{margin:18px 30px}
+.bar{background:linear-gradient(90deg,#1a151c,#121013);color:#ddd7de;font-weight:800;padding:11px 13px;letter-spacing:1px;border:1px solid #302b32;border-radius:9px;font-size:11px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:10px 0}
+.stat{border:1px solid #302b32;background:#141216;padding:12px;border-radius:9px}
+.stat b{display:block;font-size:21px;color:#f3edf4}.stat span{font-size:8px;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:.8px}
+.progress{height:5px;background:#29242b;border-radius:8px;overflow:hidden;margin-top:8px}.progress i{display:block;height:100%;background:linear-gradient(90deg,var(--pink2),var(--pink));width:0}
+.tabs{display:flex;gap:6px;margin:10px 0;flex-wrap:wrap}
+.tabs button{border:1px solid #39323b;background:#171418;padding:8px 12px;border-radius:18px;font-weight:700;color:#aaa2ab;cursor:pointer;text-transform:uppercase;font-size:9px;letter-spacing:.6px}
+.tabs button.active{background:#252026;border-color:#79617b;color:#f3dff4;box-shadow:0 0 15px rgba(196,122,200,.1)}
+.tablewrap{overflow:auto;border:1px solid #302b32;background:#0d0c0e;border-radius:9px}
+table{border-collapse:collapse;width:max-content;min-width:100%}
+th,td{border:1px solid #29252b;height:31px;text-align:center;font-size:9px}
+th{background:#19161a;color:#aaa2ab;font-weight:800;position:sticky;top:0;z-index:2}
+th:first-child,td:first-child{position:sticky;left:0;z-index:3;background:#121013;text-align:left;padding:0 10px;min-width:280px;color:#d9d2da}
+th:first-child{background:#19161a;z-index:4}
+.cell{width:31px;min-width:31px;cursor:pointer;background:#0d0c0e;color:var(--pink);font-size:13px;font-weight:800}
+.cell.done{background:rgba(196,122,200,.14);color:#d99dde}
+.cell.cross{background:rgba(198,107,119,.13);color:#d9818b}
+.habitname{display:flex;align-items:center;gap:7px}
+.habitname input{border:0;outline:0;width:100%;font:inherit;background:transparent;color:inherit}
+.delete{border:0;background:transparent;color:#6f6971;cursor:pointer;font-weight:800}
+.add{margin-top:8px;border:1px dashed #604963;background:#141116;color:#d59ad8;padding:8px 12px;border-radius:8px;font-weight:700;cursor:pointer}
+.study-note{font-size:10px;color:var(--muted);margin:8px 0}
+.studycell{width:31px;min-width:31px;cursor:pointer;background:#0d0c0e;color:#aaa}
+.studycell.selected{background:rgba(196,122,200,.15);color:#d99dde;font-weight:800}
+.bottom{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.card{border:1px solid #302b32;padding:15px;border-radius:9px;background:#141216}
+.card h3{font-size:10px;letter-spacing:1.4px;color:#ded7df}
+textarea,input[type=text],input[type=date]{width:100%;border:1px solid #342f36;background:#0f0e10;color:#eee;padding:9px 10px;border-radius:8px;font:inherit;outline:none}
+textarea:focus,input[type=text]:focus,input[type=date]:focus{border-color:var(--pink)}
+.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}
+.primary,.secondary{border:0;border-radius:18px;padding:9px 13px;font-weight:800;cursor:pointer;font-size:10px}
+.primary{background:linear-gradient(135deg,#b76abb,#d38bd5);color:#160f18;box-shadow:0 8px 22px rgba(196,122,200,.15)}
+.secondary{background:#201c21;color:#cfc6d0;border:1px solid #3b343d}
+.timer{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.timerbox{border:1px solid #302b32;background:#141216;padding:15px;border-radius:9px}
+.timerdisplay{font-size:37px;font-weight:800;letter-spacing:2px;color:#f0eaf1;margin:7px 0 12px}
+.timerhint{font-size:9px;color:#918a93;letter-spacing:1px;text-transform:uppercase}
+.history{max-height:130px;overflow:auto;margin-top:10px}.history div{padding:7px 0;border-bottom:1px solid #29252b;font-size:10px;color:#aaa2ab}
+.quote{display:none}
+footer{text-align:center;color:#5e5961;font-size:9px;letter-spacing:1.2px;padding:22px}
+@media(max-width:720px){
+ .app{margin:0;border:0;border-radius:0}.brand{font-size:27px}.topgrid{grid-template-columns:1fr 92px;padding:16px}.goal{grid-column:1/3}.section{margin:14px}.stats{grid-template-columns:repeat(2,1fr)}.avatar{width:68px;height:92px}.bottom,.timer{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div class="brand">WINTER ARC</div><div style="font-size:9px;color:#9d959e;letter-spacing:2px;margin-top:4px">90 DAYS • DISCIPLINE • CONSISTENCY</div>
+  <div class="tag">MOTIVATION QUOTESHALA<small>YOUR MINDSET. YOUR GOALS. YOUR DISCIPLINE.</small></div>
+</header>
+
+<div class="topgrid">
+  <div class="field"><label>Name:</label><input id="name" type="text" placeholder="Your name"></div>
+  <div class="field"><label>Start Date:</label><input id="start" type="date"></div>
+  <div class="avatar" id="avatarBox" title="Tap to upload avatar">Avatar<input id="avatarInput" type="file" accept="image/*" style="display:none"></div>
+  <div class="field goal"><label>Goal:</label><input id="goal" type="text" placeholder="Your main Winter Arc goal"></div>
+</div>
+
+<section class="section">
+  <div class="bar">90 DAY PROGRESS</div>
+  <div class="stats">
+    <div class="stat"><b id="dayNo">Day 1</b><span>Current Day</span></div>
+    <div class="stat"><b id="daysLeft">90</b><span>Days Remaining</span></div>
+    <div class="stat"><b id="streak">0</b><span>Current Streak</span></div>
+    <div class="stat"><b id="percent">0%</b><span>Overall Progress</span><div class="progress"><i id="bar"></i></div></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="bar">5 DAILY HABITS | 90 DAY TRACKER</div>
+  <div class="study-note">Tap a cell to cycle: ✓ completed → × missed → blank.</div><div class="tabs" id="monthTabs"></div>
+  <div class="tablewrap"><table id="habitTable"></table></div>
+  <button class="add" id="addHabit">+ Add Habit</button>
+</section>
+
+<section class="section">
+  <div class="bar">DAILY STUDY HOURS TRACKER</div>
+  <div class="study-note">Tap one row for each day to record your study hours.</div>
+  <div class="tabs" id="studyTabs"></div>
+  <div class="tablewrap"><table id="studyTable"></table></div>
+  <div class="stats">
+    <div class="stat"><b id="totalHours">0</b><span>Total Study Hours</span></div>
+    <div class="stat"><b id="avgHours">0</b><span>Average / Day</span></div>
+    <div class="stat"><b id="bestDay">0</b><span>Highest Study Day</span></div>
+    <div class="stat"><b id="studyDays">0</b><span>Study Days</span></div>
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="bar">SUNLIGHT WALK | 15 MIN TIMER + RECORDS</div>
+  <div class="timer">
+    <div class="timerbox">
+      <div class="timerhint">Morning Sunlight Walk</div>
+      <div class="timerdisplay" id="sunTimer">15:00</div>
+      <div class="actions">
+        <button class="primary" id="sunStart">Start</button>
+        <button class="secondary" id="sunPause">Pause</button>
+        <button class="secondary" id="sunReset">Reset</button>
+        <button class="secondary" id="sunSave">Save Record</button>
+      </div>
+      <div class="timerhint" style="margin-top:10px">Saved records stay on this device.</div>
+    </div>
+    <div class="timerbox">
+      <div class="timerhint">Saved Walk Records</div>
+      <div class="history" id="sunHistory"></div>
+    </div>
+  </div>
+</section>
+<section class="section bottom">
+  <div class="card">
+    <h3>DAILY CHECK-IN</h3>
+    <input id="checkDate" type="date">
+    <p><textarea id="journal" rows="5" placeholder="What did you accomplish today? What will you improve tomorrow?"></textarea></p>
+    <div class="actions"><button class="primary" id="saveJournal">Save Check-in</button><button class="secondary" id="todayBtn">Today</button></div>
+  </div>
+  <div class="card">
+    <h3>90 DAY SUMMARY</h3>
+    <p><b>Habits completed:</b> <span id="habitDone">0</span></p>
+    <p><b>Habit completion:</b> <span id="habitPct">0%</span></p>
+    <p><b>Total study hours:</b> <span id="summaryHours">0</span></p>
+    <p><b>Longest streak:</b> <span id="longest">0</span></p>
+    <div class="actions"><button class="secondary" id="reset">Reset Winter Arc</button></div>
+  </div>
+</section>
+<footer>WINTER ARC • 90 DAYS • Your consistency is the goal.</footer>
+</div>
+
+<script>
+const KEY="winterArc90_v1";
+const quotes=[
+"Discipline beats motivation when motivation disappears.",
+"Small progress every day becomes a completely different you.",
+"Your future is built by what you do today.",
+"Do the work. Keep the promise you made to yourself.",
+"Consistency is the real Winter Arc.",
+"One day at a time. One habit at a time.",
+"Study hard. Train smart. Rest well. Repeat."
+];
+let data=JSON.parse(localStorage.getItem(KEY)||"null")||{
+ name:"",goal:"",start:new Date().toISOString().slice(0,10),
+ habits:["Morning Sunlight Walk – 15 mins","30 Mins Exercise","Daily Give 1 Test","Teach a Friend What You Learned","12 Glasses of Water"],
+ done:{}, study:{}, journals:{}
+};
+let activeMonth=0, activeStudyMonth=0;
+const save=()=>localStorage.setItem(KEY,JSON.stringify(data));
+const d0=()=>new Date(data.start+"T00:00:00");
+const dayCount=()=>Math.max(1,Math.min(90,Math.floor((new Date()-d0())/86400000)+1));
+const dayDate=n=>new Date(d0().getTime()+(n-1)*86400000);
+const key=(h,d)=>h+"_"+d;
+function monthRanges(){
+ let arr=[],start=1;
+ for(let m=0;m<3;m++){
+   let s=dayDate(start), y=s.getFullYear(), mo=s.getMonth();
+   let end=Math.min(90,start+new Date(y,mo+1,0).getDate()-1);
+   arr.push({start,end,label:s.toLocaleString(undefined,{month:"long",year:"numeric"})});
+   start=end+1;
+ }
+ return arr;
+}
+function renderMonths(){
+ const ranges=monthRanges(), tabs=document.getElementById("monthTabs");
+ tabs.innerHTML=ranges.map((r,i)=>`<button class="${i===activeMonth?'active':''}" onclick="activeMonth=${i};renderHabits()">${r.label}</button>`).join("");
+ document.getElementById("studyTabs").innerHTML=ranges.map((r,i)=>`<button class="${i===activeStudyMonth?'active':''}" onclick="activeStudyMonth=${i};renderStudy()">${r.label}</button>`).join("");
+}
+function renderHabits(){
+ renderMonths();
+ const r=monthRanges()[activeMonth], t=document.getElementById("habitTable");
+ let h=`<thead><tr><th>Habit / Day</th>${Array.from({length:r.end-r.start+1},(_,i)=>`<th>${r.start+i}</th>`).join("")}</tr></thead><tbody>`;
+ data.habits.forEach((name,hi)=>{
+  h+=`<tr><td><div class="habitname"><span>${hi+1}.</span><input value="${esc(name)}" onchange="data.habits[${hi}]=this.value;save();renderHabits()"><button class="delete" onclick="data.habits.splice(${hi},1);save();renderHabits()">×</button></div></td>`;
+  for(let d=r.start;d<=r.end;d++){let k=key(hi,d);h+=`<td class="cell ${data.done[k]==='done'?'done':data.done[k]==='missed'?'cross':''}" onclick="toggleHabit(${hi},${d})">${data.done[k]==='done'?'✓':data.done[k]==='missed'?'×':''}</td>`}
+  h+="</tr>";
+ });
+ t.innerHTML=h+"</tbody>";
+ updateStats();
+}
+function toggleHabit(h,d){let k=key(h,d);data.done[k]=data.done[k]==="done"?"missed":data.done[k]==="missed"?false:"done";save();renderHabits();}
+function renderStudy(){
+ renderMonths();
+ const r=monthRanges()[activeStudyMonth], t=document.getElementById("studyTable"), rows=[5,4,3,2,1];
+ let h=`<thead><tr><th>Hours / Day</th>${Array.from({length:r.end-r.start+1},(_,i)=>`<th>${r.start+i}</th>`).join("")}</tr></thead><tbody>`;
+ rows.forEach(hr=>{
+  h+=`<tr><td>${hr} Hr</td>`;
+  for(let d=r.start;d<=r.end;d++) h+=`<td class="studycell ${data.study[d]===hr?'selected':''}" onclick="setStudy(${d},${hr})">${data.study[d]===hr?'●':''}</td>`;
+  h+="</tr>";
+ });
+ t.innerHTML=h+"</tbody>";
+ updateStudy();
+}
+function setStudy(d,hr){data.study[d]=data.study[d]===hr?0:hr;save();renderStudy();}
+function updateStats(){
+ const total=data.habits.length*90, done=Object.values(data.done).filter(Boolean).length;
+ document.getElementById("habitDone").textContent=done;
+ document.getElementById("habitPct").textContent=total?Math.round(done/total*100)+"%":"0%";
+ const today=dayCount(), completeDays=[];
+ for(let d=1;d<=today;d++){let ok=data.habits.length && data.habits.every((_,h)=>data.done[key(h,d)]==="done"); if(ok)completeDays.push(d)}
+ let streak=0; for(let d=today;d>=1;d--){let ok=data.habits.length && data.habits.every((_,h)=>data.done[key(h,d)]==="done"); if(ok)streak++;else break}
+ let longest=0,run=0;for(let d=1;d<=90;d++){let ok=data.habits.length && data.habits.every((_,h)=>data.done[key(h,d)]==="done");run=ok?run+1:0;longest=Math.max(longest,run)}
+ const progress=Math.round((done/(total||1))*100);
+ document.getElementById("dayNo").textContent="Day "+today;
+ document.getElementById("daysLeft").textContent=Math.max(0,90-today);
+ document.getElementById("streak").textContent=streak;
+ document.getElementById("longest").textContent=longest;
+ document.getElementById("percent").textContent=progress+"%";
+ document.getElementById("bar").style.width=progress+"%";
+ document.getElementById("quote").textContent=quotes[(today-1)%quotes.length];
+}
+function updateStudy(){
+ const vals=Object.values(data.study).map(Number).filter(Boolean), total=vals.reduce((a,b)=>a+b,0);
+ document.getElementById("totalHours").textContent=total;
+ document.getElementById("summaryHours").textContent=total;
+ document.getElementById("avgHours").textContent=(total/90).toFixed(1);
+ document.getElementById("bestDay").textContent=vals.length?Math.max(...vals):0;
+ document.getElementById("studyDays").textContent=vals.length;
+}
+function loadJournal(){
+ const date=document.getElementById("checkDate").value||new Date().toISOString().slice(0,10);
+ document.getElementById("journal").value=data.journals[date]||"";
+}
+function esc(s){return String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll('"',"&quot;")}
+document.getElementById("name").value=data.name;
+document.getElementById("goal").value=data.goal;
+document.getElementById("start").value=data.start;
+document.getElementById("name").oninput=e=>{data.name=e.target.value;save()};
+document.getElementById("goal").oninput=e=>{data.goal=e.target.value;save()};
+document.getElementById("start").onchange=e=>{data.start=e.target.value;save();renderHabits();renderStudy();loadJournal()};
+document.getElementById("addHabit").onclick=()=>{data.habits.push("New Habit");save();renderHabits()};
+document.getElementById("checkDate").value=new Date().toISOString().slice(0,10);
+document.getElementById("checkDate").onchange=loadJournal;
+document.getElementById("todayBtn").onclick=()=>{document.getElementById("checkDate").value=new Date().toISOString().slice(0,10);loadJournal()};
+document.getElementById("saveJournal").onclick=()=>{data.journals[document.getElementById("checkDate").value]=document.getElementById("journal").value;save();alert("Check-in saved!")};
+document.getElementById("reset").onclick=()=>{if(confirm("Reset all Winter Arc progress?")){localStorage.removeItem(KEY);location.reload()}};
+
+// Avatar upload
+const avatarInput=document.getElementById("avatarInput"), avatarBox=document.getElementById("avatarBox");
+avatarBox.onclick=()=>avatarInput.click();
+avatarInput.onchange=e=>{
+  const file=e.target.files[0]; if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{data.avatar=ev.target.result;save();showAvatar()};
+  reader.readAsDataURL(file);
+};
+function showAvatar(){
+  if(data.avatar) avatarBox.innerHTML=`<img src="${data.avatar}" alt="Avatar"><input id="avatarInput" type="file" accept="image/*" style="display:none">`;
+}
+showAvatar();
+
+// Sunlight walk timer + saved records
+data.sunRecords=data.sunRecords||[];
+let sunSeconds=900, sunInterval=null;
+function drawSun(){
+  const m=Math.floor(sunSeconds/60), s=sunSeconds%60;
+  document.getElementById("sunTimer").textContent=`${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+}
+document.getElementById("sunStart").onclick=()=>{
+  if(sunInterval)return;
+  sunInterval=setInterval(()=>{
+    if(sunSeconds>0){sunSeconds--;drawSun();}
+    else {clearInterval(sunInterval);sunInterval=null;}
+  },1000);
+};
+document.getElementById("sunPause").onclick=()=>{clearInterval(sunInterval);sunInterval=null};
+document.getElementById("sunReset").onclick=()=>{clearInterval(sunInterval);sunInterval=null;sunSeconds=900;drawSun()};
+document.getElementById("sunSave").onclick=()=>{
+  const elapsed=900-sunSeconds;
+  if(elapsed<=0)return;
+  data.sunRecords.unshift({date:new Date().toLocaleString(),seconds:elapsed});
+  data.sunRecords=data.sunRecords.slice(0,30); save(); renderSunHistory();
+};
+function renderSunHistory(){
+  const box=document.getElementById("sunHistory");
+  box.innerHTML=data.sunRecords.length?data.sunRecords.map(r=>{
+    const mins=Math.floor(r.seconds/60), secs=r.seconds%60;
+    return `<div><b>${mins}m ${secs}s</b> — ${r.date}</div>`;
+  }).join(""):"No saved walks yet.";
+}
+renderSunHistory(); drawSun();
+
+renderHabits();renderStudy();loadJournal();
+</script>
+</body>
+</html>

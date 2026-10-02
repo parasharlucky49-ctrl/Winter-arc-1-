@@ -1,0 +1,13 @@
+<resources>
+    <style name="Theme.WinterArc" parent="android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:fontFamily">sans</item>
+        <item name="android:colorAccent">#C47AC8</item>
+        <item name="android:navigationBarColor">#080708</item>
+        <item name="android:statusBarColor">#080708</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowSplashScreenBackground">#080708</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/winter_arc_splash</item>
+        <item name="android:windowSplashScreenIconBackgroundColor">#171418</item>
+        <item name="android:windowSplashScreenAnimationDuration">700</item>
+    </style>
+</resources>
